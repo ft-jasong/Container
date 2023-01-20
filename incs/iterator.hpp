@@ -1,5 +1,23 @@
+#ifndef ITERATOR_HPP
+#define ITERATOR_HPP
+
+#include <iterator>
+#include <type_traits>
+#include <cstddef>
+
 namespace ft
 {
+	template <class Category, class T, class Distance = ptrdiff_t,
+			  class Pointer = T *, class Reference = T &>
+	struct iterator
+	{
+		typedef T value_type;
+		typedef Distance difference_type;
+		typedef Pointer pointer;
+		typedef Reference reference;
+		typedef Category iterator_category;
+	};
+
 	template <class Iterator> // iterator 자체가 들어오는 경우
 	class iterator_traits
 	{
@@ -28,3 +46,5 @@ namespace ft
 		typedef std::random_access_iterator_tag iterator_category;
 	};
 }
+
+#endif

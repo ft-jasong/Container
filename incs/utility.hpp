@@ -1,3 +1,6 @@
+#ifndef UTILITY_HPP
+#define UTILITY_HPP
+
 namespace ft
 {
 	template <class T>
@@ -168,3 +171,5 @@ namespace ft
 		return !(lhs < rhs);
 	}
 }
+
+#endif
