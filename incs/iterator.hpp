@@ -50,7 +50,7 @@ namespace ft
 	template <class Iterator>
 	class reverse_iterator
 	{
-	protected:
+	private:
 		Iterator _current;
 
 	public:
