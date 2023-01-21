@@ -23,7 +23,7 @@ namespace ft
 		random_access_iterator(const random_access_iterator &random_iter) : _current(random_iter._current) {}
 		random_access_iterator &operator=(const random_access_iterator &random_iter)
 		{
-			if (*this == ramdom_iter)
+			if (*this == random_iter)
 				return *this;
 			_current = random_iter._current;
 			return *this;
