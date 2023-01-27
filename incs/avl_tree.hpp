@@ -1,3 +1,6 @@
+#ifndef AVL_TREE_HPP
+# define AVL_TREE_HPP
+
 #include <iostream>
 #include "utility.hpp"
 
@@ -9,7 +12,7 @@ namespace ft
 		public:
 			typedef Key key_type;
 			typedef T mapped_type;
-			typedef ft::pair<const key_type, mapped_type> value_type;
+			typedef ft::pair<key_type, mapped_type> value_type;
 			typedef Node<Key, T> *node_pointer;
 			typedef Node<Key, T> &node_reference;
 			// typedef const Node<Key, T> *const_node_pointer; //TODO: 필요함???
@@ -59,6 +62,46 @@ namespace ft
 				int leftHeight = _left ? _left->height() : 0;
 				int rightHeight = _right ? _right->height() : 0;
 				return leftHeight - rightHeight;
+			}
+
+			node_pointer next()
+			{
+				if (_right)
+				{
+					node_pointer node = _right;
+					while (node->left())
+						node = node->left();
+					return node;
+				}
+				else
+				{
+					node_pointer node = this;
+					while (node->parent() && node->parent()->right() == node)
+						node = node->parent();
+					if (!node)
+						throw std::out_of_range("out of range");
+					return node->parent();
+				}
+			}
+
+			node_pointer prev()
+			{
+				if (_left)
+				{
+					node_pointer node = _left;
+					while (node->right())
+						node = node->right();
+					return node;
+				}
+				else
+				{
+					node_pointer node = this;
+					while (node->parent() && node->parent()->left() == node)
+						node = node->parent();
+					if (!node)
+						throw std::out_of_range("out of range");
+					return node->parent();
+				}
 			}
 	};
 	
@@ -317,3 +360,5 @@ namespace ft
 			}
 	};
 };
+
+#endif
