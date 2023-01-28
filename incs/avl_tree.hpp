@@ -358,6 +358,7 @@ namespace ft
 				_update_height(root->right());
 				root->height() = std::max(root->left() ? root->left()->height() : 0, root->right() ? root->right()->height() : 0) + 1;
 			}
+
 	};
 };
 

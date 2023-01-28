@@ -20,7 +20,7 @@ namespace ft
 		typedef typename iterator_traits<Node<Key, Value> *>::reference reference;
 
 		bidirectional_iterator() : _current() {}
-		bidirectional_iterator(T *current) : _current(current) {}
+		bidirectional_iterator(Node<Key, Value> *current) : _current(current) {}
 		bidirectional_iterator(const bidirectional_iterator &bidirectional_iter) : _current(bidirectional_iter.base()) {}
 		bidirectional_iterator &operator=(const bidirectional_iterator &bidirectional_iter)
 		{
