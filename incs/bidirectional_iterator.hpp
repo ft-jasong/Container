@@ -13,15 +13,15 @@ namespace ft
 		Node<Key, Value> *_current;
 
 	public:
-		typedef typename iterator_traits<Node<Key, Value> *>::iterator_category iterator_category;
-		typedef typename iterator_traits<Node<Key, Value> *>::value_type value_type;
-		typedef typename iterator_traits<Node<Key, Value> *>::difference_type difference_type;
-		typedef typename iterator_traits<Node<Key, Value> *>::pointer pointer;
-		typedef typename iterator_traits<Node<Key, Value> *>::reference reference;
+		typedef typename iterator_traits<ft::pair<Key, Value> *>::value_type value_type;
+		typedef typename iterator_traits<ft::pair<Key, Value> *>::difference_type difference_type;
+		typedef typename iterator_traits<ft::pair<Key, Value> *>::pointer pointer;
+		typedef typename iterator_traits<ft::pair<Key, Value> *>::reference reference;
+		typedef std::bidirectional_iterator_tag iterator_category;
 
 		bidirectional_iterator() : _current() {}
 		bidirectional_iterator(Node<Key, Value> *current) : _current(current) {}
-		bidirectional_iterator(const bidirectional_iterator &bidirectional_iter) : _current(bidirectional_iter.base()) {}
+		bidirectional_iterator(const bidirectional_iterator &bidirectional_iter) : _current(bidirectional_iter._current) {}
 		bidirectional_iterator &operator=(const bidirectional_iterator &bidirectional_iter)
 		{
 			if (*this == bidirectional_iter)
@@ -35,7 +35,7 @@ namespace ft
 			return _current->value();
 		}
 
-		pointer operator->()
+		pointer operator->() const
 		{
 			return &_current->value();
 		}
@@ -62,7 +62,7 @@ namespace ft
 			_current = _current->prev();
 			return tmp;
 		}
-		pointer base() const { return _current; }
+		Node<Key, Value> *base() const { return _current; }
 
 	};
 

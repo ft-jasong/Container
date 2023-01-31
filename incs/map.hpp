@@ -28,9 +28,10 @@ namespace ft
 		typedef bidirectional_iterator<const key_type, mapped_type> const_iterator;
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+		typedef typename ft::AvlTree<key_type, mapped_type, key_compare, allocator_type>::node_pointer node_pointer;
 
 	private:
-		AvlTree<value_type, key_compare> _tree;
+		ft::AvlTree<key_type, mapped_type, key_compare, allocator_type> _tree;
 		allocator_type _alloc;
 
 	public:
@@ -119,7 +120,12 @@ namespace ft
 		}
 		ft::pair<iterator, bool> insert(const value_type &val)
 		{
-			return _tree.insert(val);
+			iterator it = find(val.first);
+			if (it == end()) {
+				_tree.insert(val);
+				return ft::make_pair(iterator(_tree.find(val.first)), true);
+			}
+			return ft::make_pair(it, false);
 		}
 		iterator insert(iterator position, const value_type &val)
 		{
@@ -163,22 +169,51 @@ namespace ft
 		}
 		iterator find(const key_type &k)
 		{
-			return iterator(_tree.find(k));
+			node_pointer node_ptr = _tree.find(k);
+			if (node_ptr == NULL)
+				return end();
+			return iterator(node_ptr);
 		}
 		const_iterator find(const key_type &k) const
 		{
-			return const_iterator(_tree.find(k));
+			node_pointer node_ptr = _tree.find(k);
+			if (node_ptr == NULL)
+				return end();
+			return const_iterator(node_ptr);
 		}
 		iterator lower_bound(const key_type &k) // TODO: tree lower bound does not exist
 		{
-			return iterator(_tree.lower_bound(k));
+			iterator it = begin();
+			while (it != end() && key_comp()(it->first, k))
+				++it;
+			return it;
+		}
+		const_iterator lower_bound(const key_type &k) const
+		{
+			iterator it = begin();
+			while (it != end() && key_comp()(it->first, k))
+				++it;
+			return it;
+		}
+		iterator upper_bound(const key_type &k) // TODO: tree upper bound does not exist
+		{
+			iterator it = begin();
+			std::cout << it->first << std::endl;
+			while (it != end() && !key_comp()(k, it->first))
+				++it;
+			return it;
+		}
+		const_iterator upper_bound(const key_type &k) const
+		{
+			iterator it = begin();
+			while (it != end() && !key_comp()(k, it->first))
+				++it;
+			return it;
 		}
 		size_type count(const key_type& k)
 		{
 			return _tree.count(k);
 		}
-
-
 		ft::pair<const_iterator, const_iterator> equal_range(const key_type &k) const
 		{
 			//TODO: upper bound does not exist

@@ -106,7 +106,7 @@ namespace ft
 	};
 	
 
-	template <class Key, class T>
+	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<Key, T> > >
 	class AvlTree
 	{
 		public:
@@ -117,19 +117,31 @@ namespace ft
 			typedef Node<Key, T> &node_reference;
 			typedef const Node<Key, T> *const_node_pointer;
 			typedef const Node<Key, T> &const_node_reference;
+			typedef Compare key_compare;
+			typedef Allocator allocator_type;
 
 		private:
 			node_pointer _root;
 			size_t _size;
+			key_compare _compare;
+			allocator_type _alloc;
+			node_pointer _end;
 
 		public:
-			AvlTree() : _root(NULL), _size(0) {}
-			AvlTree(const AvlTree &tree) : _root(NULL), _size(0)
+			// AvlTree() : _root(NULL), _size(0) {}
+			// Not good copy constructor
+			// AvlTree(const AvlTree &tree) : _root(NULL), _size(0), _compare(tree._compare), _alloc(tree._alloc), _end(tree._end)
+			// {
+			// 	*this = tree;
+			// }
+			// AvlTree(const key_compare &compare) : _root(NULL), _size(0), _compare(compare) {}
+			AvlTree(const key_compare &compare = key_compare(), const allocator_type &alloc = allocator_type()) : _root(NULL), _size(0), _compare(compare), _alloc(alloc)
 			{
-				*this = tree;
+				_end = new Node<Key, T>();
 			}
 			virtual ~AvlTree()
 			{
+				delete _end;
 				clear();
 			}
 			AvlTree &operator=(const AvlTree &tree)
@@ -190,10 +202,37 @@ namespace ft
 
 			void insert(const value_type &value)
 			{
+				if (_end->parent())
+				{
+					_end->parent()->right() = NULL;
+					_end->parent() = NULL;
+				}
 				_insert(_root, value);
+				node_pointer node = _root;
+				while (node->right())
+					node = node->right();
+				_end->parent() = node;
+				node->right() = _end;
 			}
 
 			void erase(const key_type &key)
+			{
+				if (_end->parent())
+				{
+					_end->parent()->right() = NULL;
+					_end->parent() = NULL;
+				}
+				_erase(key);
+				node_pointer node = _root;
+				while (node && node->right())
+					node = node->right();
+				_end->parent() = node;
+				if (node)
+					node->right() = _end;
+			}
+
+			// TODO: _erase 재귀 remind
+			void _erase(const key_type &key)
 			{
 				node_pointer node = find(key);
 				if (!node)
@@ -234,7 +273,7 @@ namespace ft
 					while (successor->left())
 						successor = successor->left();
 					tmp = successor->value();
-					erase(tmp.first);
+					_erase(tmp.first);
 					node->value() = tmp;
 				}
 				_size--;
@@ -322,7 +361,7 @@ namespace ft
 					_size++;
 					return ;
 				}
-				if (node->value().first < value.first)
+				if (Compare()(value.first, node->value().first))
 				{
 					if (node->right())
 						_insert(node->right(), value);
@@ -359,6 +398,20 @@ namespace ft
 				root->height() = std::max(root->left() ? root->left()->height() : 0, root->right() ? root->right()->height() : 0) + 1;
 			}
 
+			node_pointer begin()
+			{
+				node_pointer node = _root;
+				while (node->left())
+					node = node->left();
+				return node;
+			}
+
+			node_pointer end()
+			{
+				if (size() == 0)
+					return (_root);
+				return _end;
+			}
 	};
 };
 
