@@ -72,18 +72,27 @@ namespace ft
 		// {
 		// 	return bidirectional_iterator<Key, Value>(const_cast<Node<Key, Value>* >(this->_current));
 		// }
+		bool operator==(const bidirectional_iterator &bidirectional_iter) const
+		{
+			return _current == bidirectional_iter._current;
+		}
+
+		bool operator!=(const bidirectional_iterator &bidirectional_iter) const
+		{
+			return _current != bidirectional_iter._current;
+		}
 	};
 
-	template <class Key, class Value>
-	bool operator==(const bidirectional_iterator<Key, Value> &lhs, const bidirectional_iterator<Key, Value> &rhs)
-	{
-		return lhs.base() == rhs.base();
-	}
+	// template <class Key, class Value>
+	// bool operator==(const bidirectional_iterator<Key, Value> &lhs, const bidirectional_iterator<Key, Value> &rhs)
+	// {
+	// 	return lhs.base() == rhs.base();
+	// }
 
-	template <class Key, class Value>
-	bool operator!=(const bidirectional_iterator<Key, Value> &lhs, const bidirectional_iterator<Key, Value> &rhs)
-	{
-		return lhs.base() != rhs.base();
-	}
+	// template <class Key, class Value>
+	// bool operator!=(const bidirectional_iterator<Key, Value> &lhs, const bidirectional_iterator<Key, Value> &rhs)
+	// {
+	// 	return lhs.base() != rhs.base();
+	// }
 }
 #endif

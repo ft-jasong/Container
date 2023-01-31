@@ -112,7 +112,7 @@ namespace ft
 		public:
 			typedef Key key_type;
 			typedef T mapped_type;
-			typedef ft::pair<const key_type, mapped_type> value_type;
+			typedef ft::pair<key_type, mapped_type> value_type;
 			typedef Node<Key, T> *node_pointer;
 			typedef Node<Key, T> &node_reference;
 			typedef const Node<Key, T> *const_node_pointer;
@@ -146,7 +146,7 @@ namespace ft
 			}
 			AvlTree &operator=(const AvlTree &tree)
 			{
-				if (*this == tree)
+				if (this->_root == tree._root)
 					return *this;
 				clear();
 				_root = copy(tree._root);
@@ -188,7 +188,7 @@ namespace ft
 				delete node;
 			}
 
-			node_pointer find(const key_type &key)
+			node_pointer find(const key_type &key) const
 			{
 				node_pointer node = _root;
 				while (node)
@@ -414,6 +414,11 @@ namespace ft
 				if (size() == 0)
 					return (_root);
 				return _end;
+			}
+
+			bool empty() const
+			{
+				return (size() == 0);
 			}
 	};
 };
