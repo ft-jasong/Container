@@ -169,20 +169,29 @@ namespace ft
 		{
 			return const_iterator(_tree.find(k));
 		}
-		iterator lower_bound(const key_type &k)
+		iterator lower_bound(const key_type &k) // TODO: tree lower bound does not exist
 		{
 			return iterator(_tree.lower_bound(k));
 		}
-		
+		size_type count(const key_type& k)
+		{
+			return _tree.count(k);
+		}
 
 
 		ft::pair<const_iterator, const_iterator> equal_range(const key_type &k) const
 		{
-			return ft::make_pair(lower_bound(k), upper_bound(k));
+			//TODO: upper bound does not exist
+			return ft::make_pair(lower_bound(k), upper_bound(k)); 
 		}
 		ft::pair<iterator, iterator> equal_range(const key_type &k)
 		{
+			//TODO: upper bound does not exist
 			return ft::make_pair(lower_bound(k), upper_bound(k));
+		}
+		allocator_type get_allocator() const
+		{
+			return _alloc;
 		}
 	};
 }
