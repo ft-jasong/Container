@@ -64,6 +64,14 @@ namespace ft
 		}
 		Node<Key, Value> *base() const { return _current; }
 
+		operator bidirectional_iterator<const Key, const Value>() const
+		{
+			return (bidirectional_iterator<const Key, const Value>((Node <const Key, const Value> *)(this->_current)));
+		}
+		// operator bidirectional_iterator<Key, Value>() const
+		// {
+		// 	return bidirectional_iterator<Key, Value>(const_cast<Node<Key, Value>* >(this->_current));
+		// }
 	};
 
 	template <class Key, class Value>

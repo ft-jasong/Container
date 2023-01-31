@@ -25,7 +25,7 @@ namespace ft
 		typedef typename allocator_type::difference_type difference_type;
 		typedef typename allocator_type::size_type size_type;
 		typedef bidirectional_iterator<key_type, mapped_type> iterator;
-		typedef bidirectional_iterator<const key_type, mapped_type> const_iterator;
+		typedef bidirectional_iterator<const key_type, const mapped_type> const_iterator;
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 		typedef typename ft::AvlTree<key_type, mapped_type, key_compare, allocator_type>::node_pointer node_pointer;
@@ -73,7 +73,7 @@ namespace ft
 		}
 		const_iterator begin() const
 		{
-			return const_iterator(_tree.begin());
+			return iterator(_tree.begin());
 		}
 		iterator end()
 		{
@@ -81,23 +81,7 @@ namespace ft
 		}
 		const_iterator end() const
 		{
-			return const_iterator(_tree.end());
-		}
-		reverse_iterator rbegin()
-		{
-			return reverse_iterator(end());
-		}
-		const_reverse_iterator rbegin() const
-		{
-			return const_reverse_iterator(end());
-		}
-		reverse_iterator rend()
-		{
-			return reverse_iterator(begin());
-		}
-		const_reverse_iterator rend() const
-		{
-			return const_reverse_iterator(begin());
+			return iterator(_tree.end());
 		}
 		bool empty() const
 		{
@@ -190,7 +174,7 @@ namespace ft
 		}
 		const_iterator lower_bound(const key_type &k) const
 		{
-			iterator it = begin();
+			const_iterator it = begin();
 			while (it != end() && key_comp()(it->first, k))
 				++it;
 			return it;
@@ -205,7 +189,7 @@ namespace ft
 		}
 		const_iterator upper_bound(const key_type &k) const
 		{
-			iterator it = begin();
+			const_iterator it = begin();
 			while (it != end() && !key_comp()(k, it->first))
 				++it;
 			return it;

@@ -154,6 +154,9 @@ namespace ft
 				return *this;
 			}
 
+			key_compare &key_comp() { return _compare; }
+			const key_compare &key_comp() const { return _compare; }
+
 			// TODO: need??
 			node_pointer &root() { return _root; }
 			const node_pointer &root() const { return _root; }
@@ -398,7 +401,7 @@ namespace ft
 				root->height() = std::max(root->left() ? root->left()->height() : 0, root->right() ? root->right()->height() : 0) + 1;
 			}
 
-			node_pointer begin()
+			node_pointer begin() const
 			{
 				node_pointer node = _root;
 				while (node->left())
@@ -406,7 +409,7 @@ namespace ft
 				return node;
 			}
 
-			node_pointer end()
+			node_pointer end() const
 			{
 				if (size() == 0)
 					return (_root);
