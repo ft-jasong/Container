@@ -32,12 +32,10 @@ namespace ft
 			{
 				*this = node;
 			}
-			virtual ~Node()
-			{
-			}
+			virtual ~Node() {}
 			Node &operator=(const Node &node)
 			{
-				if (*this == node)
+				if (this == &node)
 					return *this;
 				_value = node._value;
 				_left = node._left;
@@ -141,15 +139,34 @@ namespace ft
 			}
 			virtual ~AvlTree()
 			{
-				delete _end;
 				clear();
+				delete _end;
 			}
 			AvlTree &operator=(const AvlTree &tree)
 			{
 				if (this->_root == tree._root)
 					return *this;
 				clear();
-				_root = copy(tree._root);
+				// TODO: double clear on destroy
+				_compare = tree._compare;
+				_alloc = tree._alloc;
+				// delete dummy end node 
+				tree._end->parent()->right() = NULL;
+				tree._end->parent() = NULL;
+				_root = copy(tree._root); // copy without dummy end node
+				// connect end node on parameter tree
+				node_pointer param_node = tree._root;
+				while (param_node->right())
+					param_node = param_node->right();
+				param_node->right() = tree._end;
+				tree._end->parent() = param_node;
+				// connect end node on this tree
+				_end = new Node<Key, T>();
+				node_pointer this_node = _root;
+				while (this_node->right())
+					this_node = this_node->right();
+				this_node->right() = _end;
+				_end->parent() = this_node;
 				_size = tree._size;
 				return *this;
 			}
@@ -164,15 +181,33 @@ namespace ft
 			size_t &size() { return _size; } // TODO: need??
 			const size_t &size() const { return _size; }
 
-			node_pointer copy(const_node_pointer node) // TODO: const_node_pointer??
+			node_pointer copy(const_node_pointer node)// TODO: const_node_pointer??
 			{
 				if (!node)
 					return NULL;
 				node_pointer newNode = new Node<Key, T>(node->value());
 				newNode->left() = copy(node->left());
+				if (newNode->left())
+					newNode->left()->parent() = newNode;
 				newNode->right() = copy(node->right());
+				if (newNode->right())
+					newNode->right()->parent() = newNode;
 				return newNode;
 			}
+
+			// node_pointer _copy(const_node_pointer node) // TODO: const_node_pointer??
+			// {
+			// 	if (!node)
+			// 		return NULL;
+			// 	node_pointer newNode = new Node<Key, T>(node->value());
+			// 	newNode->left() = copy(node->left());
+			// 	if (newNode->left())
+			// 		newNode->left()->parent() = newNode;
+			// 	newNode->right() = copy(node->right());
+			// 	if (newNode->right())
+			// 		newNode->right()->parent() = newNode;
+			// 	return newNode;
+			// }
 			void clear()
 			{
 				clear(_root);
@@ -185,7 +220,8 @@ namespace ft
 					return;
 				clear(node->left());
 				clear(node->right());
-				delete node;
+				if (node != _end)
+					delete node;
 			}
 
 			node_pointer find(const key_type &key) const
@@ -364,7 +400,7 @@ namespace ft
 					_size++;
 					return ;
 				}
-				if (Compare()(value.first, node->value().first))
+				if (!Compare()(value.first, node->value().first))
 				{
 					if (node->right())
 						_insert(node->right(), value);
@@ -404,6 +440,8 @@ namespace ft
 			node_pointer begin() const
 			{
 				node_pointer node = _root;
+				if (!node)
+					return (_root);
 				while (node->left())
 					node = node->left();
 				return node;

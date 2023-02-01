@@ -41,13 +41,17 @@ namespace ft
 		{
 			insert(first, last);
 		}
-		map(const map &x) : _tree(x._tree), _alloc(x._alloc) {}
+		map(const map &x) : _alloc(x._alloc) 
+		{
+			*this = x;
+		}
 		map &operator=(const map &x)
 		{
-			if (this == &x)
-				return *this;
-			_tree = x._tree;
-			_alloc = x._alloc;
+			if (this != &x)
+			{
+				_tree = x._tree;
+				_alloc = x._alloc;
+			}
 			return *this;
 		}
 		~map() {}
@@ -201,7 +205,6 @@ namespace ft
 		iterator upper_bound(const key_type &k) // TODO: tree upper bound does not exist
 		{
 			iterator it = begin();
-			std::cout << it->first << std::endl;
 			while (it != end() && !key_comp()(k, it->first))
 				++it;
 			return it;
