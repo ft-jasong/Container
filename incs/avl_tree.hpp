@@ -247,6 +247,7 @@ namespace ft
 					_end->parent() = NULL;
 				}
 				_insert(_root, value);
+				_size++;
 				node_pointer node = _root;
 				while (node->right())
 					node = node->right();
@@ -289,6 +290,7 @@ namespace ft
 					else
 						_root = NULL;
 					delete node;
+					_size--;
 				}
 				else if (!node->left() || !node->right())
 				{
@@ -304,6 +306,7 @@ namespace ft
 						_root = child;
 					child->parent() = node->parent();
 					delete node;
+					_size--;
 				}
 				else
 				{
@@ -315,7 +318,6 @@ namespace ft
 					_erase(tmp.first);
 					node->value() = tmp;
 				}
-				_size--;
 				_rebalance(parent);
 				_update_height(_root);
 			}
@@ -397,7 +399,6 @@ namespace ft
 				if (!node)
 				{
 					_root = new Node<Key, T>(value);
-					_size++;
 					return ;
 				}
 				if (!Compare()(value.first, node->value().first))
@@ -408,7 +409,6 @@ namespace ft
 					{
 						node->right() = new Node<Key, T>(value);
 						node->right()->parent() = node;
-						_size++;
 						_rebalance(node);
 						_update_height(_root);
 					}
@@ -421,7 +421,6 @@ namespace ft
 					{
 						node->left() = new Node<Key, T>(value);
 						node->left()->parent() = node;
-						_size++;
 						_rebalance(node);
 						_update_height(_root);
 					}
