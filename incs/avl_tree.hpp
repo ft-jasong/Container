@@ -146,30 +146,14 @@ namespace ft
 			}
 			AvlTree &operator=(const AvlTree &tree)
 			{
-				if (this->_root == tree._root)
+				if (this == &tree)
 					return *this;
 				clear();
-				// TODO: double clear on destroy
 				_compare = tree._compare;
 				_alloc = tree._alloc;
-				// // delete dummy end node 
-				// tree._end->parent()->right() = NULL;
-				// tree._end->parent() = NULL;
-				_root = copy(tree._root); // copy without dummy end node
-				// // connect end node on parameter tree
-				// node_pointer param_node = tree._root;
-				// while (param_node->right())
-				// 	param_node = param_node->right();
-				// param_node->right() = tree._end;
-				// tree._end->parent() = param_node;
-				// // connect end node on this tree
-				// _end = new Node<Key, T>();
-				// node_pointer this_node = _root;
-				// while (this_node->right())
-				// 	this_node = this_node->right();
-				// this_node->right() = _end;
-				// _end->parent() = this_node;
+				_end = tree._end;
 				_size = tree._size;
+				_root = copy(tree._root);
 				return *this;
 			}
 
@@ -447,6 +431,25 @@ namespace ft
 			bool empty() const
 			{
 				return (size() == 0);
+			}
+
+			void swap(AvlTree &x)
+			{
+				node_pointer tmp = _root;
+				_root = x._root;
+				x._root = tmp;
+				node_pointer tmp2 = _end;
+				_end = x._end;
+				x._end = tmp2;
+				size_t tmp3 = _size;
+				_size = x._size;
+				x._size = tmp3;
+				key_compare tmp4 = _compare;
+				_compare = x._compare;
+				x._compare = tmp4;
+				allocator_type tmp5 = _alloc;
+				_alloc = x._alloc;
+				x._alloc = tmp5;
 			}
 	};
 };

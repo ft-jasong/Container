@@ -166,9 +166,7 @@ namespace ft
 		}
 		void swap(map &x)
 		{
-			map tmp_map = *this;
-			*this = x;
-			x = tmp_map;
+			_tree.swap(x._tree);
 		}
 		void clear()
 		{
