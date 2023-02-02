@@ -29,9 +29,10 @@ namespace ft
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 		typedef typename ft::AvlTree<key_type, mapped_type, key_compare, allocator_type>::node_pointer node_pointer;
+		typedef ft::AvlTree<key_type, mapped_type, key_compare, allocator_type> tree_type;
 
 	private:
-		ft::AvlTree<key_type, mapped_type, key_compare, allocator_type> _tree;
+		tree_type _tree;
 		allocator_type _alloc;
 
 	public:
@@ -47,11 +48,8 @@ namespace ft
 		}
 		map &operator=(const map &x)
 		{
-			if (this != &x)
-			{
-				_tree = x._tree;
-				_alloc = x._alloc;
-			}
+			clear();
+			insert(x.begin(), x.end());
 			return *this;
 		}
 		~map() {}
@@ -140,7 +138,10 @@ namespace ft
 		void insert(InputIterator first, InputIterator last)
 		{
 			while (first != last)
-				insert(*first++);
+			{
+				insert(*first);
+				first++;
+			}
 		}
 		void erase(iterator position)
 		{
@@ -155,12 +156,19 @@ namespace ft
 		void erase(iterator first, iterator last)
 		{
 			while (first != last)
-				erase(first++);
+			{
+				iterator tmp_iter = first;
+				first++;
+				value_type tmp_val = *first;
+				erase(tmp_iter);
+				if (first != last)
+					first = find(tmp_val.first);
+			}
 		}
 		void swap(map &x)
 		{
-			std::swap(_tree, x._tree);
-			std::swap(_alloc, x._alloc);
+			_tree = x._tree;
+			x._tree = tmp_tree;
 		}
 		void clear()
 		{

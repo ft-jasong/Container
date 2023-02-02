@@ -76,9 +76,10 @@ namespace ft
 					node_pointer node = this;
 					while (node->parent() && node->parent()->right() == node)
 						node = node->parent();
+					node = node->parent();
 					if (!node)
 						throw std::out_of_range("out of range");
-					return node->parent();
+					return node;
 				}
 			}
 
@@ -96,9 +97,10 @@ namespace ft
 					node_pointer node = this;
 					while (node->parent() && node->parent()->left() == node)
 						node = node->parent();
+					node = node->parent();
 					if (!node)
 						throw std::out_of_range("out of range");
-					return node->parent();
+					return node;
 				}
 			}
 	};
@@ -227,7 +229,7 @@ namespace ft
 			node_pointer find(const key_type &key) const
 			{
 				node_pointer node = _root;
-				while (node)
+				while (node && node != _end)
 				{
 					if (node->value().first == key)
 						return node;
@@ -278,7 +280,7 @@ namespace ft
 				if (!node)
 					return ;
 				node_pointer parent = node->parent();
-				if (!node->left() && !node->right())
+				if (!node->left() && !node->right()) // 자식 아무것도 없는 놈
 				{
 					if (node->parent())
 					{
@@ -308,7 +310,7 @@ namespace ft
 					delete node;
 					_size--;
 				}
-				else
+				else // 자식 둘 다 있을 때
 				{
 					value_type tmp;
 					node_pointer successor = node->right();
@@ -440,7 +442,7 @@ namespace ft
 			{
 				node_pointer node = _root;
 				if (!node)
-					return (_root);
+					return (_end);
 				while (node->left())
 					node = node->left();
 				return node;
@@ -448,8 +450,8 @@ namespace ft
 
 			node_pointer end() const
 			{
-				if (size() == 0)
-					return (_root);
+				// if (size() == 0)
+				// 	return (_root);
 				return _end;
 			}
 
