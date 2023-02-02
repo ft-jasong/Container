@@ -152,23 +152,23 @@ namespace ft
 				// TODO: double clear on destroy
 				_compare = tree._compare;
 				_alloc = tree._alloc;
-				// delete dummy end node 
-				tree._end->parent()->right() = NULL;
-				tree._end->parent() = NULL;
+				// // delete dummy end node 
+				// tree._end->parent()->right() = NULL;
+				// tree._end->parent() = NULL;
 				_root = copy(tree._root); // copy without dummy end node
-				// connect end node on parameter tree
-				node_pointer param_node = tree._root;
-				while (param_node->right())
-					param_node = param_node->right();
-				param_node->right() = tree._end;
-				tree._end->parent() = param_node;
-				// connect end node on this tree
-				_end = new Node<Key, T>();
-				node_pointer this_node = _root;
-				while (this_node->right())
-					this_node = this_node->right();
-				this_node->right() = _end;
-				_end->parent() = this_node;
+				// // connect end node on parameter tree
+				// node_pointer param_node = tree._root;
+				// while (param_node->right())
+				// 	param_node = param_node->right();
+				// param_node->right() = tree._end;
+				// tree._end->parent() = param_node;
+				// // connect end node on this tree
+				// _end = new Node<Key, T>();
+				// node_pointer this_node = _root;
+				// while (this_node->right())
+				// 	this_node = this_node->right();
+				// this_node->right() = _end;
+				// _end->parent() = this_node;
 				_size = tree._size;
 				return *this;
 			}
@@ -212,20 +212,9 @@ namespace ft
 			// }
 			void clear()
 			{
-				clear(_root);
-				_root = NULL;
-				_size = 0;
+				while (!empty())
+					erase(begin()->value().first);
 			}
-			void clear(node_pointer node)
-			{
-				if (!node)
-					return;
-				clear(node->left());
-				clear(node->right());
-				if (node != _end)
-					delete node;
-			}
-
 			node_pointer find(const key_type &key) const
 			{
 				node_pointer node = _root;
