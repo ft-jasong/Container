@@ -6,7 +6,6 @@
 #include "avl_tree.hpp"
 #include "bidirectional_iterator.hpp"
 #include <iostream>
-
 namespace ft
 {
 	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
@@ -167,8 +166,9 @@ namespace ft
 		}
 		void swap(map &x)
 		{
-			_tree = x._tree;
-			x._tree = tmp_tree;
+			map tmp_map = *this;
+			*this = x;
+			x = tmp_map;
 		}
 		void clear()
 		{
