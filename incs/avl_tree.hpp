@@ -206,7 +206,7 @@ namespace ft
 				{
 					if (node->value().first == key)
 						return node;
-					else if (node->value().first < key)
+					else if (_compare(node->value().first, key))
 						node = node->right();
 					else
 						node = node->left();
@@ -376,7 +376,7 @@ namespace ft
 					_root = new Node<Key, T>(value);
 					return ;
 				}
-				if (!Compare()(value.first, node->value().first))
+				if (!_compare(value.first, node->value().first))
 				{
 					if (node->right())
 						_insert(node->right(), value);
