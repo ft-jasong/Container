@@ -32,12 +32,10 @@ namespace ft
 			{
 				*this = node;
 			}
-			virtual ~Node()
-			{
-			}
+			virtual ~Node() {}
 			Node &operator=(const Node &node)
 			{
-				if (*this == node)
+				if (this == &node)
 					return *this;
 				_value = node._value;
 				_left = node._left;
@@ -106,41 +104,75 @@ namespace ft
 	};
 	
 
-	template <class Key, class T>
+	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<Key, T> > >
 	class AvlTree
 	{
 		public:
 			typedef Key key_type;
 			typedef T mapped_type;
-			typedef ft::pair<const key_type, mapped_type> value_type;
+			typedef ft::pair<key_type, mapped_type> value_type;
 			typedef Node<Key, T> *node_pointer;
 			typedef Node<Key, T> &node_reference;
 			typedef const Node<Key, T> *const_node_pointer;
 			typedef const Node<Key, T> &const_node_reference;
+			typedef Compare key_compare;
+			typedef Allocator allocator_type;
 
 		private:
 			node_pointer _root;
 			size_t _size;
+			key_compare _compare;
+			allocator_type _alloc;
+			node_pointer _end;
 
 		public:
-			AvlTree() : _root(NULL), _size(0) {}
-			AvlTree(const AvlTree &tree) : _root(NULL), _size(0)
+			// AvlTree() : _root(NULL), _size(0) {}
+			// Not good copy constructor
+			// AvlTree(const AvlTree &tree) : _root(NULL), _size(0), _compare(tree._compare), _alloc(tree._alloc), _end(tree._end)
+			// {
+			// 	*this = tree;
+			// }
+			// AvlTree(const key_compare &compare) : _root(NULL), _size(0), _compare(compare) {}
+			AvlTree(const key_compare &compare = key_compare(), const allocator_type &alloc = allocator_type()) : _root(NULL), _size(0), _compare(compare), _alloc(alloc)
 			{
-				*this = tree;
+				_end = new Node<Key, T>();
 			}
 			virtual ~AvlTree()
 			{
 				clear();
+				delete _end;
 			}
 			AvlTree &operator=(const AvlTree &tree)
 			{
-				if (*this == tree)
+				if (this->_root == tree._root)
 					return *this;
 				clear();
-				_root = copy(tree._root);
+				// TODO: double clear on destroy
+				_compare = tree._compare;
+				_alloc = tree._alloc;
+				// delete dummy end node 
+				tree._end->parent()->right() = NULL;
+				tree._end->parent() = NULL;
+				_root = copy(tree._root); // copy without dummy end node
+				// connect end node on parameter tree
+				node_pointer param_node = tree._root;
+				while (param_node->right())
+					param_node = param_node->right();
+				param_node->right() = tree._end;
+				tree._end->parent() = param_node;
+				// connect end node on this tree
+				_end = new Node<Key, T>();
+				node_pointer this_node = _root;
+				while (this_node->right())
+					this_node = this_node->right();
+				this_node->right() = _end;
+				_end->parent() = this_node;
 				_size = tree._size;
 				return *this;
 			}
+
+			key_compare &key_comp() { return _compare; }
+			const key_compare &key_comp() const { return _compare; }
 
 			// TODO: need??
 			node_pointer &root() { return _root; }
@@ -149,15 +181,33 @@ namespace ft
 			size_t &size() { return _size; } // TODO: need??
 			const size_t &size() const { return _size; }
 
-			node_pointer copy(const_node_pointer node) // TODO: const_node_pointer??
+			node_pointer copy(const_node_pointer node)// TODO: const_node_pointer??
 			{
 				if (!node)
 					return NULL;
 				node_pointer newNode = new Node<Key, T>(node->value());
 				newNode->left() = copy(node->left());
+				if (newNode->left())
+					newNode->left()->parent() = newNode;
 				newNode->right() = copy(node->right());
+				if (newNode->right())
+					newNode->right()->parent() = newNode;
 				return newNode;
 			}
+
+			// node_pointer _copy(const_node_pointer node) // TODO: const_node_pointer??
+			// {
+			// 	if (!node)
+			// 		return NULL;
+			// 	node_pointer newNode = new Node<Key, T>(node->value());
+			// 	newNode->left() = copy(node->left());
+			// 	if (newNode->left())
+			// 		newNode->left()->parent() = newNode;
+			// 	newNode->right() = copy(node->right());
+			// 	if (newNode->right())
+			// 		newNode->right()->parent() = newNode;
+			// 	return newNode;
+			// }
 			void clear()
 			{
 				clear(_root);
@@ -170,10 +220,11 @@ namespace ft
 					return;
 				clear(node->left());
 				clear(node->right());
-				delete node;
+				if (node != _end)
+					delete node;
 			}
 
-			node_pointer find(const key_type &key)
+			node_pointer find(const key_type &key) const
 			{
 				node_pointer node = _root;
 				while (node)
@@ -190,10 +241,38 @@ namespace ft
 
 			void insert(const value_type &value)
 			{
+				if (_end->parent())
+				{
+					_end->parent()->right() = NULL;
+					_end->parent() = NULL;
+				}
 				_insert(_root, value);
+				_size++;
+				node_pointer node = _root;
+				while (node->right())
+					node = node->right();
+				_end->parent() = node;
+				node->right() = _end;
 			}
 
 			void erase(const key_type &key)
+			{
+				if (_end->parent())
+				{
+					_end->parent()->right() = NULL;
+					_end->parent() = NULL;
+				}
+				_erase(key);
+				node_pointer node = _root;
+				while (node && node->right())
+					node = node->right();
+				_end->parent() = node;
+				if (node)
+					node->right() = _end;
+			}
+
+			// TODO: _erase 재귀 remind
+			void _erase(const key_type &key)
 			{
 				node_pointer node = find(key);
 				if (!node)
@@ -211,6 +290,7 @@ namespace ft
 					else
 						_root = NULL;
 					delete node;
+					_size--;
 				}
 				else if (!node->left() || !node->right())
 				{
@@ -226,6 +306,7 @@ namespace ft
 						_root = child;
 					child->parent() = node->parent();
 					delete node;
+					_size--;
 				}
 				else
 				{
@@ -234,10 +315,9 @@ namespace ft
 					while (successor->left())
 						successor = successor->left();
 					tmp = successor->value();
-					erase(tmp.first);
+					_erase(tmp.first);
 					node->value() = tmp;
 				}
-				_size--;
 				_rebalance(parent);
 				_update_height(_root);
 			}
@@ -319,10 +399,9 @@ namespace ft
 				if (!node)
 				{
 					_root = new Node<Key, T>(value);
-					_size++;
 					return ;
 				}
-				if (node->value().first < value.first)
+				if (!Compare()(value.first, node->value().first))
 				{
 					if (node->right())
 						_insert(node->right(), value);
@@ -330,7 +409,6 @@ namespace ft
 					{
 						node->right() = new Node<Key, T>(value);
 						node->right()->parent() = node;
-						_size++;
 						_rebalance(node);
 						_update_height(_root);
 					}
@@ -343,7 +421,6 @@ namespace ft
 					{
 						node->left() = new Node<Key, T>(value);
 						node->left()->parent() = node;
-						_size++;
 						_rebalance(node);
 						_update_height(_root);
 					}
@@ -359,6 +436,27 @@ namespace ft
 				root->height() = std::max(root->left() ? root->left()->height() : 0, root->right() ? root->right()->height() : 0) + 1;
 			}
 
+			node_pointer begin() const
+			{
+				node_pointer node = _root;
+				if (!node)
+					return (_root);
+				while (node->left())
+					node = node->left();
+				return node;
+			}
+
+			node_pointer end() const
+			{
+				if (size() == 0)
+					return (_root);
+				return _end;
+			}
+
+			bool empty() const
+			{
+				return (size() == 0);
+			}
 	};
 };
 
