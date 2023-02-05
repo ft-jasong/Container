@@ -140,7 +140,8 @@ namespace ft
 			virtual ~AvlTree()
 			{
 				clear();
-				delete _end;
+				_alloc.destroy(_end);
+				_alloc.deallocate(_end, 1);
 			}
 			AvlTree &operator=(const AvlTree &tree)
 			{
@@ -263,7 +264,8 @@ namespace ft
 					}
 					else
 						_root = NULL;
-					delete node;
+					_alloc.destroy(node);
+					_alloc.deallocate(node, 1);
 					_size--;
 				}
 				else if (!node->left() || !node->right())
@@ -279,7 +281,8 @@ namespace ft
 					else
 						_root = child;
 					child->parent() = node->parent();
-					delete node;
+					_alloc.destroy(node);
+					_alloc.deallocate(node, 1);
 					_size--;
 				}
 				else // 자식 둘 다 있을 때
