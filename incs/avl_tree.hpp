@@ -18,8 +18,6 @@ namespace ft
 			typedef ft::pair<key_type, mapped_type> value_type;
 			typedef Node<Key, T> *node_pointer;
 			typedef Node<Key, T> &node_reference;
-			// typedef const Node<Key, T> *const_node_pointer; //TODO: 필요함???
-			// typedef const Node<Key, T> &const_node_reference;
 
 		private:
 			value_type _value;
@@ -377,7 +375,6 @@ namespace ft
 				{
 					_root = _alloc.allocate(1);
 					_alloc.construct(_root, value);
-					// _root = new Node<Key, T>(value);
 					return ;
 				}
 				if (!_compare(value.first, node->value().first))
