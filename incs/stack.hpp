@@ -12,11 +12,11 @@ namespace ft
 		typedef Container container_type;
 		typedef size_t size_type;
 
-	private:
+	protected:
 		container_type c;
 
 	public:
-		explicit stack(const container_type &container = container_type()) : c(container) {}
+		explicit stack(const container_type &ctnr = container_type()) : c(ctnr) {}
 
 		bool empty() const { return c.empty(); }
 		size_type size() const { return c.size(); }
