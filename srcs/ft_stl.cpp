@@ -881,6 +881,11 @@ int main(void)
 	else
 		std::cout << GREEN << BOLD << "ft::map - clear is OK" << RESET << std::endl;
 	
+	std::cout << CYAN << BOLD << "\n\n------------- LEAKS -------------\n\n" << RESET << std::endl;
+
+	system("leaks benchmark");
+
+
 	std::cout << GREEN << BOLD << "------------- TEST is OK -------------" << RESET << std::endl;
 	return (0);
 }
