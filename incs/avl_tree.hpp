@@ -179,19 +179,6 @@ namespace ft
 				return newNode;
 			}
 
-			// node_pointer _copy(const_node_pointer node) // TODO: const_node_pointer??
-			// {
-			// 	if (!node)
-			// 		return NULL;
-			// 	node_pointer newNode = new Node<Key, T>(node->value());
-			// 	newNode->left() = copy(node->left());
-			// 	if (newNode->left())
-			// 		newNode->left()->parent() = newNode;
-			// 	newNode->right() = copy(node->right());
-			// 	if (newNode->right())
-			// 		newNode->right()->parent() = newNode;
-			// 	return newNode;
-			// }
 			void clear()
 			{
 				while (!empty())
