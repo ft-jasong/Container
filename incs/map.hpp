@@ -54,7 +54,7 @@ namespace ft
 		~map() {}
 
 		class value_compare
-		{   // in C++98, it is required to inherit binary_function<value_type,value_type,bool>
+		{
 			friend class map;
 			protected:
 				Compare comp;
@@ -194,7 +194,7 @@ namespace ft
 				return end();
 			return iterator(node_ptr);
 		}
-		iterator lower_bound(const key_type &k) // TODO: tree lower bound does not exist
+		iterator lower_bound(const key_type &k)
 		{
 			iterator it = begin();
 			while (it != end() && key_comp()(it->first, k))
@@ -208,7 +208,7 @@ namespace ft
 				++it;
 			return it;
 		}
-		iterator upper_bound(const key_type &k) // TODO: tree upper bound does not exist
+		iterator upper_bound(const key_type &k)
 		{
 			iterator it = begin();
 			while (it != end() && !key_comp()(k, it->first))
@@ -230,12 +230,10 @@ namespace ft
 		}
 		ft::pair<const_iterator, const_iterator> equal_range(const key_type &k) const
 		{
-			//TODO: upper bound does not exist
 			return ft::make_pair(lower_bound(k), upper_bound(k)); 
 		}
 		ft::pair<iterator, iterator> equal_range(const key_type &k)
 		{
-			//TODO: upper bound does not exist
 			return ft::make_pair(lower_bound(k), upper_bound(k));
 		}
 		allocator_type get_allocator() const
@@ -283,7 +281,6 @@ namespace ft
 		return !(lhs < rhs);
 	}
 }
-//TODO: swap does not exist
 	template <class Key, class T, class Compare, class Alloc>
 	void swap (ft::map<Key,T,Compare,Alloc>& x, ft::map<Key,T,Compare,Alloc>& y)
 	{

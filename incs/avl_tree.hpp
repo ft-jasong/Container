@@ -157,14 +157,13 @@ namespace ft
 			key_compare &key_comp() { return _compare; }
 			const key_compare &key_comp() const { return _compare; }
 
-			// TODO: need??
 			node_pointer &root() { return _root; }
 			const node_pointer &root() const { return _root; }
 
-			size_t &size() { return _size; } // TODO: need??
+			size_t &size() { return _size; }
 			const size_t &size() const { return _size; }
 
-			node_pointer copy(const_node_pointer node)// TODO: const_node_pointer??
+			node_pointer copy(const_node_pointer node)
 			{
 				if (!node)
 					return NULL;
