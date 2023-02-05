@@ -2,11 +2,14 @@
 # define AVL_TREE_HPP
 
 #include <iostream>
+#include <memory>
 #include "utility.hpp"
 
 namespace ft 
 {
-	template <class Key, class T>
+	template <
+		class Key,
+		class T >
 	class Node
 	{
 		public:
@@ -119,25 +122,20 @@ namespace ft
 			typedef const Node<Key, T> &const_node_reference;
 			typedef Compare key_compare;
 			typedef Allocator allocator_type;
+			typedef typename Allocator::template rebind<Node<Key, T> >::other Node_Allocator;
 
 		private:
 			node_pointer _root;
 			size_t _size;
 			key_compare _compare;
-			allocator_type _alloc;
+			Node_Allocator _alloc;
 			node_pointer _end;
 
 		public:
-			// AvlTree() : _root(NULL), _size(0) {}
-			// Not good copy constructor
-			// AvlTree(const AvlTree &tree) : _root(NULL), _size(0), _compare(tree._compare), _alloc(tree._alloc), _end(tree._end)
-			// {
-			// 	*this = tree;
-			// }
-			// AvlTree(const key_compare &compare) : _root(NULL), _size(0), _compare(compare) {}
-			AvlTree(const key_compare &compare = key_compare(), const allocator_type &alloc = allocator_type()) : _root(NULL), _size(0), _compare(compare), _alloc(alloc)
+			AvlTree(const key_compare &compare = key_compare(), const Node_Allocator &alloc = Node_Allocator()) : _root(NULL), _size(0), _compare(compare), _alloc(alloc)
 			{
-				_end = new Node<Key, T>();
+				_end = _alloc.allocate(1);
+				_alloc.construct(_end, Node<Key, T>());
 			}
 			virtual ~AvlTree()
 			{
@@ -171,7 +169,8 @@ namespace ft
 			{
 				if (!node)
 					return NULL;
-				node_pointer newNode = new Node<Key, T>(node->value());
+				node_pointer newNode = _alloc.allocate(1);
+				_alloc.construct(newNode, Node<Key, T>(node->value()));
 				newNode->left() = copy(node->left());
 				if (newNode->left())
 					newNode->left()->parent() = newNode;
@@ -373,7 +372,9 @@ namespace ft
 			{
 				if (!node)
 				{
-					_root = new Node<Key, T>(value);
+					_root = _alloc.allocate(1);
+					_alloc.construct(_root, value);
+					// _root = new Node<Key, T>(value);
 					return ;
 				}
 				if (!_compare(value.first, node->value().first))
@@ -382,7 +383,8 @@ namespace ft
 						_insert(node->right(), value);
 					else
 					{
-						node->right() = new Node<Key, T>(value);
+						node->right() = _alloc.allocate(1);
+						_alloc.construct(node->right(), value);
 						node->right()->parent() = node;
 						_rebalance(node);
 						_update_height(_root);
@@ -394,7 +396,8 @@ namespace ft
 						_insert(node->left(), value);
 					else
 					{
-						node->left() = new Node<Key, T>(value);
+						node->left() = _alloc.allocate(1);
+						_alloc.construct(node->left(), value);
 						node->left()->parent() = node;
 						_rebalance(node);
 						_update_height(_root);
@@ -447,7 +450,7 @@ namespace ft
 				key_compare tmp4 = _compare;
 				_compare = x._compare;
 				x._compare = tmp4;
-				allocator_type tmp5 = _alloc;
+				Node_Allocator tmp5 = _alloc;
 				_alloc = x._alloc;
 				x._alloc = tmp5;
 			}
